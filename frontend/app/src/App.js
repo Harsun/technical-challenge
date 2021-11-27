@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 const axios = require('axios');
-const url = '';
+const url = 'http://localhost:8080';
 class App extends Component {
 
   constructor(props){
@@ -14,30 +14,26 @@ class App extends Component {
   }
 
   componentDidMount(){
-    let result = this.postTimeZone(this.timezone);
+    let result = this.postTimeZone(this.state.timezone);
     result===true?console.log('Timezone posted'):console.log('Error occured while posting.');
   }
 
-  getTimeZone() {
-    const date = new Date();
-    const dateAsString = date.toString();
-    const timezone = dateAsString.match(/\(([^)]+)\)$/)[1];
-    
+  getTimeZone() { 
     this.setState({
-      timezone: timezone
-    }) 
+      timezone: new Date().toString() 
+    })
   }
 
   async postTimeZone(timezone) {
+
     let config = {
-      method: 'post',
-      crossorigin:true,
-      url: url,
-      data: {
-        timezone: timezone
+      method: 'get',
+      url: 'http://localhost:8080/?datetime='+timezone,
+      headers: {
+        'Accept': 'application/json, text/plain, /'
       }
     };
-    
+
     return await axios(config)
     .then(function (response) {
       console.info('response', response);
@@ -46,8 +42,7 @@ class App extends Component {
     .catch(function (error) {
       console.error('error', error);
       return false;
-    });
-    
+    });    
   }
 
   render() {
@@ -60,3 +55,4 @@ class App extends Component {
 }
 
 export default App;
+
